@@ -31,6 +31,9 @@ Each motor accepts angles **0°–180°**. Commands are throttled at 100ms inter
 - Real-time slider control for all 6 motors
 - **Two-way sync** — ESP32 is source of truth, UI reflects real servo positions
 - Pose Builder — set all 6 angles at once and send sequentially
+- Batch commands + Inverse Kinematics panel (IK solver is a placeholder)
+- Recording & playback — record a motor sequence, save it to the server, and replay it at 0.5x–2x speed
+- Simple passcode-protected login screen
 - WebSocket auto-reconnect
 - Connection status indicator
 - PM2-ready for VM deployment
@@ -125,20 +128,25 @@ The server broadcasts these to all connected browser clients automatically.
 ## Project Structure
 
 ```
+├── esp32code.ino                 # ESP32 firmware (WebSocket client + servo control)
 ├── .github/workflows/
-│   └── deploy.yml             # CI/CD pipeline for Azure VM
+│   └── deploy.yml                # CI/CD pipeline for Azure VM
 ├── src/
 │   ├── hooks/
-│   │   └── useWebSocket.js    # WebSocket connection hook
+│   │   └── useWebSocket.js       # WebSocket connection hook
 │   ├── components/
-│   │   ├── MotorCard.jsx      # Individual motor control card
-│   │   ├── PoseBuilder.jsx    # Multi-motor pose sender
-│   │   └── StatusBar.jsx      # Connection status display
-│   ├── App.jsx                # Main application layout
-│   ├── App.css                # Component styles
-│   ├── index.css              # Global theme variables
-│   └── main.jsx               # React entry point
+│   │   ├── MotorCard.jsx         # Individual motor control card
+│   │   ├── PoseBuilder.jsx       # Multi-motor pose sender
+│   │   ├── BatchCommand.jsx      # Batch angles + inverse kinematics panel
+│   │   ├── RecordingControls.jsx # Record, save, and playback sequences
+│   │   ├── Login.jsx             # Passcode login screen
+│   │   └── StatusBar.jsx         # Connection status display
+│   ├── App.jsx                   # Main application layout
+│   ├── App.css                   # Component styles
+│   ├── index.css                 # Global theme variables
+│   └── main.jsx                  # React entry point
 ├── server/
-│   └── index.js               # Node.js + WebSocket server
+│   ├── index.js                  # Node.js + WebSocket/HTTP server
+│   └── recordings/               # Saved recordings (generated at runtime)
 └── package.json
 ```
